@@ -1,3 +1,6 @@
+/**
+ * Vue 用法
+ */
 // import {
 //   ref,
 //   effect,
@@ -15,16 +18,30 @@
 // // 触发的依赖
 // a.value = 20;
 
-import { Dep, effectWatch } from "./core/reactivity.js";
+/**
+ * 案例：ref
+ */
+// import { Dep, effectWatch } from "./core/reactivity.js";
 
-const a = new Dep(10);
-let b = 0;
+// const a = new Dep(10);
+// let b = 0;
 
+// effectWatch(() => {
+//   // 收集依赖
+//   b = a.value + 10;
+// });
+
+// // 触发的依赖
+// a.value = 20;
+
+import { effectWatch, reactive } from "./core/reactivity.js";
+const user = reactive({
+  age: 10,
+});
+let nextAge = 0;
 effectWatch(() => {
-  // 收集依赖
-  b = a.value + 10;
-  console.log(b);
+  nextAge = user.age + 1;
+  console.log(nextAge);
 });
 
-// 触发的依赖
-a.value = 20;
+user.age++;
