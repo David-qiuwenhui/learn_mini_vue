@@ -52,36 +52,45 @@
 /**
  * 实现 mini-vue 的雏形
  */
-import { reactive, effectWatch } from "./core/reactivity.js";
+// import { reactive, effectWatch } from "./core/index.js";
 
-const App = {
-  // template -> render
-  render(context) {
-    // ui render
-    effectWatch(() => {
-      document.querySelector("#app").textContent = "";
+// const App = {
+//   // template -> render
+//   render(context) {
+//     // ui render
+//     effectWatch(() => {
+//       document.querySelector("#app").textContent = "";
 
-      const element = document.createElement("div");
-      const textNode = document.createTextNode("age");
-      const textNode2 = document.createTextNode(context.obj.age);
-      element.append(textNode);
-      element.append(textNode2);
+//       const element = document.createElement("div");
+//       const textNode = document.createTextNode("age");
+//       const textNode2 = document.createTextNode(context.obj.age);
+//       element.append(textNode);
+//       element.append(textNode2);
 
-      document.querySelector("#app").append(element);
-    });
-  },
+//       document.querySelector("#app").append(element);
+//     });
+//   },
 
-  setup() {
-    // template
-    const obj = reactive({
-      age: 10,
-    });
-    window.obj = obj;
+//   setup() {
+//     // template
+//     const obj = reactive({
+//       age: 10,
+//     });
+//     window.obj = obj;
 
-    return {
-      obj,
-    };
-  },
-};
+//     return {
+//       obj,
+//     };
+//   },
+// };
 
-App.render(App.setup());
+// App.render(App.setup());
+
+/**
+ * mini-vue 框架的演化
+ */
+import App from "./App.js";
+import { createApp } from "./core/index.js";
+
+// 模拟 vue3 真实的api
+createApp(App).mounted(document.querySelector("#app"));
