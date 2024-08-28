@@ -1,4 +1,4 @@
-import { effectWatch } from "./index.js";
+import { effectWatch, mountElement } from "./index.js";
 
 export const createApp = (rootComponent) => {
   return {
@@ -7,9 +7,10 @@ export const createApp = (rootComponent) => {
 
       effectWatch(() => {
         document.querySelector("#app").textContent = "";
-        const element = rootComponent.render(setupResult);
+        const vnode = rootComponent.render(setupResult);
 
-        rootContainer.append(element);
+        mountElement(vnode, rootContainer);
+        // rootContainer.append(element);
       });
     },
   };
