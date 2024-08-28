@@ -34,14 +34,54 @@
 // // 触发的依赖
 // a.value = 20;
 
-import { effectWatch, reactive } from "./core/reactivity.js";
-const user = reactive({
-  age: 10,
-});
-let nextAge = 0;
-effectWatch(() => {
-  nextAge = user.age + 1;
-  console.log(nextAge);
-});
+/**
+ * 案例：实现 reactivity 的reactive
+ */
+// import { effectWatch, reactive } from "./core/reactivity.js";
+// const user = reactive({
+//   age: 10,
+// });
+// let nextAge = 0;
+// effectWatch(() => {
+//   nextAge = user.age + 1;
+//   console.log(nextAge);
+// });
 
-user.age++;
+// user.age++;
+
+/**
+ * 实现 mini-vue 的雏形
+ */
+import { reactive, effectWatch } from "./core/reactivity.js";
+
+const App = {
+  // template -> render
+  render(context) {
+    // ui render
+    effectWatch(() => {
+      document.querySelector("#app").textContent = "";
+
+      const element = document.createElement("div");
+      const textNode = document.createTextNode("age");
+      const textNode2 = document.createTextNode(context.obj.age);
+      element.append(textNode);
+      element.append(textNode2);
+
+      document.querySelector("#app").append(element);
+    });
+  },
+
+  setup() {
+    // template
+    const obj = reactive({
+      age: 10,
+    });
+    window.obj = obj;
+
+    return {
+      obj,
+    };
+  },
+};
+
+App.render(App.setup());
