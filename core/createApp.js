@@ -1,16 +1,31 @@
-import { effectWatch, mountElement } from "./index.js";
+import { effectWatch, mountElement, diff } from "./index.js";
 
 export const createApp = (rootComponent) => {
   return {
     mounted(rootContainer) {
       const setupResult = rootComponent.setup();
 
-      effectWatch(() => {
-        document.querySelector("#app").textContent = "";
-        const vnode = rootComponent.render(setupResult);
+      let isMounted = false;
+      let preSubTree;
 
-        mountElement(vnode, rootContainer);
-        // rootContainer.append(element);
+      effectWatch(() => {
+        // 区分是否为首次渲染挂载
+        if (!isMounted) {
+          isMounted = true;
+
+          document.querySelector("#app").textContent = "";
+          const subTree = rootComponent.render(setupResult);
+          preSubTree = subTree;
+          mountElement(subTree, rootContainer);
+        } else {
+          document.querySelector("#app").textContent = "";
+          const subTree = rootComponent.render(setupResult);
+
+          diff(preSubTree, subTree);
+          preSubTree = subTree;
+
+          mountElement(subTree, rootContainer);
+        }
       });
     },
   };
