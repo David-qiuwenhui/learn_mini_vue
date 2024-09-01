@@ -21,3 +21,5 @@
 1. 在浏览器中选取 DOM 元素后，在控制台打印 `$0` 即可操作此元素；
 
 2. `replaceWith`可以将 DOM 元素进行替换操作，例如 `$0.replaceWith(document.createElement("div"))`
+
+3. 关键 DOM 操作：`addChild(), removeChild(), createTextNode(), createElement(), el.innerText`

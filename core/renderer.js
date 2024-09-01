@@ -3,6 +3,15 @@ function insert(el, parent) {
   parent.append(el);
 }
 
+/**
+ * 从父元素中移除子元素
+ * @param {Element} node
+ * @param {Element} parent
+ */
+function removeElement(node, parent) {
+  parent.removeChild(node);
+}
+
 function createTextNode(children) {
   return document.createTextNode(children);
 }
@@ -59,7 +68,7 @@ export const mountElement = (vnode, container) => {
 };
 
 /**
- *
+ * diff算法比较 vnode tree
  * @param {Object} n1 oldVnode
  * @param {Object} n2 newVnode
  */
@@ -92,5 +101,65 @@ export const diff = (n1, n2) => {
     }
   }
 
-  // 3. children
+  const el = (n2.el = n1.el);
+  // 3. children: string | array
+  // 3.1 oldChild: string; newChild: string
+  // 3.2 oldChild: string; newChild: array
+  // 3.3 oldChild: array; newChild: string
+  // 3.4 oldChild: array; newChild: array
+  const { children: oldChild } = n1;
+  const { children: newChild } = n2;
+
+  // newChild -> string
+  if (typeof newChild === "string") {
+    if (typeof oldChild === "string") {
+      if (oldChild !== newChild) {
+        el.innerText = newChild;
+      }
+    } else if (Array.isArray(oldChild)) {
+      el.innerText = newChild;
+    }
+  } else if (Array.isArray(newChild)) {
+    if (typeof oldChild === "string") {
+      el.innerText = "";
+      newChild.forEach((child) => {
+        mountElement(child, el);
+      });
+    } else if (Array.isArray(oldChild)) {
+      // newChild -> array
+      // new -> [a, b, c]
+      // old -> [a, b, c]
+      // 1. 依次对比
+      // 2. new > old add
+      // new -> [a, b, c]
+      // old -> [a, b]
+      // 3. new < old remove
+      // new -> [a, b]
+      // old -> [a, b, c]
+      const minLength = Math.min(oldChild.length, newChild.length);
+
+      // update
+      for (let index = 0; index < minLength; index++) {
+        const oldVnode = oldChild[index];
+        const newVnode = newChild[index];
+        diff(oldVnode, newVnode);
+      }
+
+      // add
+      if (newChild.length > minLength) {
+        for (let index = minLength; index < newChild.length; index++) {
+          const newVnode = newChild[index];
+          mountElement(newVnode, el);
+        }
+      }
+
+      // remove
+      if (oldChild.length > minLength) {
+        for (let index = minLength; index < oldChild.length; index++) {
+          const oldVnode = oldChild[index];
+          removeElement(oldVnode.el, el);
+        }
+      }
+    }
+  }
 };
